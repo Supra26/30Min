@@ -1,0 +1,37 @@
+{
+  "name": "30min-pdf-generator",
+  "version": "1.0.0",
+  "description": "A web application that generates concise study materials from PDF documents",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd project && npm run dev",
+    "build": "cd project && npm run build",
+    "preview": "cd project && npm run preview",
+    "install-deps": "cd project && npm install",
+    "backend": "cd backend && python main.py",
+    "backend-dev": "cd backend && uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+  },
+  "keywords": [
+    "pdf",
+    "study",
+    "ai",
+    "summarization",
+    "education",
+    "react",
+    "fastapi",
+    "python"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "react-router-dom": "^7.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Supra26/30Min.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Supra26/30Min/issues"
+  },
+  "homepage": "https://github.com/Supra26/30Min#readme"
+}

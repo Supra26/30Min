@@ -1,0 +1,23 @@
+# Google OAuth Configuration
+# Get this from: https://console.cloud.google.com/apis/credentials
+# Format: 1234567890-abc123def456.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=your-google-client-id-here
+
+# JWT Configuration
+# Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+SECRET_KEY=your-super-secret-key-change-in-production
+
+# Database Configuration
+DATABASE_URL=sqlite:///./thirty_minute_pdf.db
+
+# OpenAI Configuration (if needed)
+OPENAI_API_KEY=your-openai-api-key-here
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+
+# Processing Configuration
+WORDS_PER_MINUTE=250
+MAX_CHUNK_SIZE=700
+MAX_SUMMARY_LENGTH=3000 
