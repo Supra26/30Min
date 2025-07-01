@@ -285,9 +285,6 @@ async def process_pdf(
         # Update the original filename
         summary.original_filename = file.filename
         
-        # Note: Usage tracking is now handled by subscription system
-        # No need to increment usage manually
-        
         # Save to user history
         history_item = UserHistory(
             user_id=user.id if user else 0,
@@ -304,10 +301,6 @@ async def process_pdf(
         
         db.add(history_item)
         db.commit()
-        
-        # Increment usage for free users
-        if plan_type == 'free' and user and isinstance(user.id, int):
-            PricingService.increment_user_usage(user.id)
         
         logger.info(f"Successfully processed PDF: {file.filename} and saved to history")
         return summary
