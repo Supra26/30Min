@@ -180,7 +180,7 @@ const Pricing: React.FC<{ onBackToHome: () => void }> = ({ onBackToHome }) => {
           <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold text-red-300 mb-2">Unable to Load Pricing</h2>
             <p className="text-red-200 mb-4">{error}</p>
-            <p className="text-sm text-red-200/70">Please make sure the backend server is running on http://localhost:8000</p>
+            <p className="text-sm text-red-200/70">Please make sure the backend server is running on {import.meta.env.VITE_API_URL || 'http://localhost:8000'}</p>
           </div>
           <button
             onClick={() => fetchPlans()}
