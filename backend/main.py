@@ -276,6 +276,43 @@ async def process_pdf(
         
         logger.info(f"Processing PDF: {file.filename} with {time_limit} minute limit for user {user.id if user else 'None'}")
         
+        # Check for duplicate processing within last 2 minutes
+        if not user or not hasattr(user, 'id'):
+            raise HTTPException(status_code=401, detail="Invalid or missing user for duplicate check.")
+        try:
+            time_limit_int = int(time_limit) if not isinstance(time_limit, int) else time_limit
+        except Exception:
+            time_limit_int = int(str(time_limit))
+        two_minutes_ago = datetime.utcnow() - timedelta(minutes=2)
+        existing_history = db.query(UserHistory).filter(
+            UserHistory.user_id == user.id,
+            UserHistory.original_filename == file.filename,
+            UserHistory.time_limit == time_limit_int,
+            UserHistory.created_at >= two_minutes_ago
+        ).order_by(UserHistory.created_at.desc()).first()
+        if existing_history:
+            # Parse JSON fields to reconstruct summary
+            try:
+                outline = json.loads(str(getattr(existing_history, 'outline_json')))
+                condensed_content = json.loads(str(getattr(existing_history, 'condensed_content_json')))
+                key_points = json.loads(str(getattr(existing_history, 'key_points_json')))
+                quiz_json = getattr(existing_history, 'quiz_json')
+                quiz = json.loads(str(quiz_json)) if quiz_json else []
+                processing_notes = json.loads(str(getattr(existing_history, 'processing_notes_json')))
+                return SummaryResponse(
+                    outline=outline,
+                    condensed_content=condensed_content,
+                    key_points=key_points,
+                    total_reading_time_minutes=float(getattr(existing_history, 'total_reading_time')),
+                    total_word_count=int(getattr(existing_history, 'total_word_count')),
+                    quiz=quiz if quiz else [],
+                    original_filename=str(getattr(existing_history, 'original_filename')),
+                    processing_notes=processing_notes
+                )
+            except Exception as e:
+                logger.error(f"Error reconstructing summary from duplicate history: {e}")
+                # If error, continue to process as new
+        
         # Read file content
         content = await file.read()
         
@@ -296,7 +333,8 @@ async def process_pdf(
             condensed_content_json=json.dumps([chunk.model_dump() for chunk in summary.condensed_content]),
             key_points_json=json.dumps([point.model_dump() for point in summary.key_points]),
             quiz_json=json.dumps([q.model_dump() for q in summary.quiz]) if summary.quiz else None,
-            processing_notes_json=json.dumps(summary.processing_notes)
+            processing_notes_json=json.dumps(summary.processing_notes),
+            status="success"
         )
         
         db.add(history_item)
@@ -748,6 +786,19 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Webhook processing error: {e}")
         raise HTTPException(status_code=500, detail="Webhook processing failed")
+
+@app.delete("/history/clear")
+async def clear_user_history(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    """Delete all UserHistory entries for the current user (for debugging/testing only)."""
+    user = get_current_user(db, credentials.credentials)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    deleted = db.query(UserHistory).filter(UserHistory.user_id == user.id).delete()
+    db.commit()
+    return {"message": f"Deleted {deleted} history items for user {user.id}"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000) 

@@ -5,9 +5,72 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thirty-Minute PDF Study App</title>
+    <style>
+      html, body {
+        height: 100%;
+        background: #18192a;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        min-height: 100vh;
+      }
+      .main-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+      footer {
+        background: transparent;
+        text-align: center;
+        margin-top: 64px;
+        margin-bottom: 24px;
+      }
+      .footer-nav {
+        display: inline-flex;
+        gap: 18px;
+        background: rgba(167,139,250,0.10);
+        border-radius: 18px;
+        padding: 14px 32px;
+        box-shadow: 0 4px 24px rgba(109,40,217,0.10);
+      }
+      .footer-nav a {
+        display: inline-block;
+        margin: 0;
+        padding: 10px 22px;
+        background: linear-gradient(90deg, #7B61FF 60%, #5ED3F3 100%);
+        color: #fff;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1em;
+        border: none;
+        box-shadow: 0 2px 8px rgba(123,97,255,0.10);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+      }
+      .footer-nav a:hover {
+        background: linear-gradient(90deg, #5ED3F3 60%, #7B61FF 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(94,211,243,0.18);
+        transform: translateY(-2px) scale(1.04);
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div class="main-container">
+      <div id="root"></div>
+    </div>
+    <footer>
+      <div class="footer-nav">
+        <a href="/about.html">About</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/refund.html">Refund Policy</a>
+      </div>
+    </footer>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

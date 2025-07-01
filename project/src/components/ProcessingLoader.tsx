@@ -7,17 +7,18 @@ interface ProcessingLoaderProps {
   onComplete: (data: any) => void;
   selectedFile: File;
   selectedTime: number;
+  setIsProcessing: (processing: boolean) => void;
 }
 
 export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({ 
   onComplete, 
   selectedFile, 
-  selectedTime 
+  selectedTime, 
+  setIsProcessing
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const { userQuota, fetchUserQuota } = usePricingStore();
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
@@ -45,8 +46,8 @@ export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({
   ];
 
   useEffect(() => {
+    setIsProcessing(true);
     const processPDF = async () => {
-      setIsProcessing(true);
       setError(null);
       // Always check quota before processing
       await fetchUserQuota();
@@ -82,7 +83,10 @@ export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({
         }
         
         // Call onComplete with the real data
-        setTimeout(() => onComplete(data), 1000);
+        setTimeout(() => {
+          onComplete(data);
+          setIsProcessing(false);
+        }, 1000);
         
       } catch (err: any) {
         if (err.response?.status === 403) {
@@ -103,8 +107,6 @@ export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({
   }, [selectedFile, selectedTime, onComplete, fetchUserQuota, userQuota]);
 
   useEffect(() => {
-    if (!isProcessing) return;
-
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 90) {
@@ -116,11 +118,9 @@ export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({
     }, 100);
 
     return () => clearInterval(timer);
-  }, [isProcessing]);
+  }, []);
 
   useEffect(() => {
-    if (!isProcessing) return;
-
     const stepTimer = setInterval(() => {
       setCurrentStep((prev) => {
         if (prev < steps.length - 2) { // Don't go to last step until API completes
@@ -132,7 +132,7 @@ export const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({
     }, 1500);
 
     return () => clearInterval(stepTimer);
-  }, [isProcessing]);
+  }, []);
 
   if (error) {
     return (

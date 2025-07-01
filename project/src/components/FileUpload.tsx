@@ -5,12 +5,14 @@ interface FileUploadProps {
   onFileSelect: (file: File) => void;
   selectedFile: File | null;
   onRemoveFile: () => void;
+  isProcessing?: boolean;
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   onFileSelect,
   selectedFile,
   onRemoveFile,
+  isProcessing = false,
 }) => {
   const [dragActive, setDragActive] = useState(false);
 
@@ -74,6 +76,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   accept=".pdf"
                   onChange={handleFileSelect}
                   className="hidden"
+                  disabled={isProcessing}
                 />
               </label>
             </div>

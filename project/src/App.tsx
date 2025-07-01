@@ -33,6 +33,7 @@ function App() {
   const { subscriptionStatus, userQuota, fetchUserQuota } = usePricingStore();
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [quotaError, setQuotaError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Apply theme settings
   useEffect(() => {
@@ -96,11 +97,13 @@ function App() {
 
   const handleTimeSelect = (time: number) => {
     setSelectedTime(time);
+    setIsProcessing(true);
     setCurrentState('processing');
   };
 
   const handleProcessingComplete = (data: any) => {
     setProcessedData(data);
+    setIsProcessing(false);
     setCurrentState('results');
   };
 
@@ -353,6 +356,7 @@ function App() {
               onFileSelect={handleFileSelect}
               selectedFile={selectedFile}
               onRemoveFile={removeFile}
+              isProcessing={isProcessing}
             />
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-12">
               <div className="text-center">
@@ -395,6 +399,7 @@ function App() {
               onComplete={handleProcessingComplete}
               selectedFile={selectedFile}
               selectedTime={selectedTime}
+              setIsProcessing={setIsProcessing}
             />
           </div>
         )}

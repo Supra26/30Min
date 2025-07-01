@@ -470,7 +470,8 @@ class PricingService:
                 pdfs_used = db.query(UserHistory).filter(
                     UserHistory.user_id == user_id,
                     UserHistory.created_at >= period_start,
-                    UserHistory.created_at < period_end
+                    UserHistory.created_at < period_end,
+                    UserHistory.status == "success"
                 ).count()
                 if pdf_limit is not None:
                     can_process = pdfs_used < pdf_limit
@@ -497,7 +498,10 @@ class PricingService:
             )
         else:
             # No active subscription - free plan
-            pdfs_used = db.query(UserHistory).filter(UserHistory.user_id == user_id).count()
+            pdfs_used = db.query(UserHistory).filter(
+                UserHistory.user_id == user_id,
+                UserHistory.status == "success"
+            ).count()
             can_process = pdfs_used < 3
             message = "Free plan - 3 PDFs total" if can_process else "You have used all 3 free PDFs. Please upgrade to continue."
             return UserQuota(

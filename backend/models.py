@@ -95,6 +95,7 @@ class UserHistory(Base):
     key_points_json = Column(Text)  # JSON string of key points
     quiz_json = Column(Text, nullable=True)  # JSON string of quiz
     processing_notes_json = Column(Text)  # JSON string of notes
+    status = Column(String, default="success")
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationship
